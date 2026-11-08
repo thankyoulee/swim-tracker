@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "minItems": 25,
+  "items": {
+    "type": "object",
+    "required": [
+      "week",
+      "date",
+      "shortDate",
+      "dist",
+      "title",
+      "modules",
+      "planned_distance"
+    ],
+    "properties": {
+      "week": {
+        "type": "string"
+      },
+      "date": {
+        "type": "string",
+        "format": "date"
+      },
+      "shortDate": {
+        "type": "string"
+      },
+      "dist": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "modules": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "name",
+            "type",
+            "items",
+            "planned_distance"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "planned_distance": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      },
+      "planned_distance": {
+        "type": "integer",
+        "minimum": 0
+      }
+    }
+  },
+  "maxItems": 25
+}

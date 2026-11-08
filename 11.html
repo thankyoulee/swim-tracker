@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>11月游泳集训计划与池边双窗间歇表</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      touch-action: pan-y;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Strikethrough on completed task */
+    .task-checkbox:checked + div .task-text {
+      text-decoration: line-through;
+      opacity: 0.55;
+    }
+
+    /* Rest hotspot badge animation */
+    .rest-hotspot {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+      font-weight: 800;
+      padding: 1px 6px;
+      margin: 0 2px;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #059669;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      transition: all 0.15s ease;
+      vertical-align: middle;
+      font-size: 11px;
+    }
+    .dark .rest-hotspot {
+      background: rgba(16, 185, 129, 0.22);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.4);
+    }
+    .rest-hotspot:active {
+      transform: scale(0.92);
+      background: #10b981;
+      color: #fff;
+    }
+
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.15); opacity: 0.4; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .pulse-ring {
+      animation: pulse-ring 1.8s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Top Navigation & Date Bar -->
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm pt-[var(--safe-top)]">
+    <div class="px-3.5 py-2.5 flex items-center justify-between max-w-lg mx-auto">
+      <div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse"></span>
+          <h1 class="text-sm font-black tracking-tight text-slate-900 dark:text-white">11月游泳集训计划</h1>
+        </div>
+        <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">点击计划中的绿色间歇直入秒表</p>
+      </div>
+
+      <!-- Header actions: Theme toggle and Week selector -->
+      <div class="flex items-center gap-2">
+        <select id="weekJumper" class="text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 outline-none">
+          <option value="0">第 1 周 (节奏校准)</option>
+          <option value="6">第 2 周 (专项推进)</option>
+          <option value="12">第 3 周 (容量峰值)</option>
+          <option value="18">第 4 周 (调整复测)</option>
+          <option value="24">11/30 (收官衔接)</option>
+        </select>
+        <button id="themeToggleBtn" aria-label="切换主题" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-amber-300">
+          <svg id="sunIcon" class="w-4 h-4 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <svg id="moonIcon" class="w-4 h-4 block dark:hidden text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Scrollable Horizontal Day Pills -->
+    <nav class="border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/70 dark:bg-slate-900/60 px-2 py-1.5">
+      <div id="dayTabsContainer" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth max-w-lg mx-auto px-1">
+        <!-- Dynamically rendered -->
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Training Card Section -->
+  <main id="mainCardArea" class="flex-1 max-w-lg w-full mx-auto p-3.5 pb-28">
+    <!-- Card Hero Banner -->
+    <section id="cardHero" class="bg-gradient-to-br from-slate-900 via-sky-950 to-blue-900 text-white rounded-2xl p-4 shadow-md relative overflow-hidden mb-3">
+      <div class="relative z-10 flex flex-col gap-1.5">
+        <div class="flex items-center justify-between">
+          <span id="heroPhase" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-200">第 1 周</span>
+          <span id="heroDistance" class="text-xs font-black tracking-tight text-white bg-white/20 backdrop-blur-md px-2.5 py-0.5 rounded-full">4,200m</span>
+        </div>
+        <h2 id="heroTitle" class="text-base font-black tracking-tight leading-snug mt-0.5">11月2日 (周一) 自由泳持续游校准 + 混合泳四姿转换基础</h2>
+        <div class="flex items-center justify-between text-xs text-sky-200/80 pt-1 border-t border-white/10 mt-1">
+          <span id="heroDayProgress" class="font-medium text-[11px]">完成度: 0/0 (0%)</span>
+          <span class="text-[10px] text-sky-300/80 flex items-center gap-1">
+            <span>左右滑屏快速切日 ⇄</span>
+          </span>
+        </div>
+      </div>
+      <div class="absolute -right-8 -bottom-8 w-28 h-28 rounded-full bg-cyan-400/15 blur-2xl pointer-events-none"></div>
+    </section>
+
+    <!-- Training Item Modules (Checklist) -->
+    <div id="modulesContainer" class="space-y-2.5">
+      <!-- Dynamic training modules rendered here -->
+    </div>
+
+    <!-- Quick Day Switcher & Reset -->
+    <div class="flex items-center justify-between gap-2.5 mt-5 px-1">
+      <button id="prevDayBtn" class="flex-1 py-2.5 px-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold flex items-center justify-center gap-1 active:bg-slate-100 shadow-sm transition">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        <span>前一天</span>
+      </button>
+
+      <button id="resetChecksBtn" class="px-3 py-2.5 rounded-xl bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-semibold active:scale-95 transition">
+        重置勾选
+      </button>
+
+      <button id="nextDayBtn" class="flex-1 py-2.5 px-3 rounded-xl bg-sky-600 dark:bg-sky-500 text-white text-xs font-bold flex items-center justify-center gap-1 active:bg-sky-700 shadow-sm transition">
+        <span>后一天</span>
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </main>
+
+  <!-- Rest Loaded Toast Notification -->
+  <div id="restToast" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-emerald-600 text-white px-3.5 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1.5 pointer-events-none opacity-0 transition-opacity duration-200">
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    <span id="restToastText">已载入间歇: 30秒</span>
+  </div>
+
+  <!-- FLOATING BOTTOM-RIGHT TIMER TRIGGER (FAB) -->
+  <aside class="fixed bottom-6 right-5 z-40">
+    <button id="fabTimerBtn" class="relative group w-14 h-14 rounded-full bg-gradient-to-tr from-sky-600 to-cyan-500 text-white shadow-xl flex flex-col items-center justify-center active:scale-90 transition-transform">
+      <div id="fabPulseRing" class="absolute inset-0 rounded-full bg-sky-400 opacity-0 pointer-events-none"></div>
+      <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span id="fabTimerText" class="text-[9px] font-black font-mono leading-none mt-0.5">A 00:30</span>
+    </button>
+  </aside>
+
+  <!-- HALF-SCREEN COLLAPSIBLE REST TIMER DRAWER (半屏尺寸，拒绝铺满) -->
+  <div id="timerBackdrop" class="fixed inset-0 z-50 bg-black/45 backdrop-blur-[2px] hidden transition-opacity"></div>
+  <div id="timerDrawer" class="fixed inset-x-0 bottom-0 z-50 bg-white dark:bg-slate-900 rounded-t-3xl border-t border-slate-200 dark:border-slate-800 shadow-2xl transition-transform duration-300 translate-y-full flex flex-col max-h-[52vh] sm:max-h-[50vh] overflow-hidden">
+    
+    <!-- Drawer Top Bar & Collapse Button -->
+    <div class="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50/80 dark:bg-slate-900/80">
+      <div class="flex items-center gap-2">
+        <div class="w-6 h-6 rounded-md bg-sky-100 dark:bg-sky-900/50 flex items-center justify-center text-sky-600 dark:text-sky-400">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        </div>
+        <div>
+          <h3 class="font-extrabold text-slate-900 dark:text-white text-xs">池边双窗间歇计时器</h3>
+        </div>
+      </div>
+
+      <!-- 收纳按键 (大触摸区，点击直接收回右下角) -->
+      <button id="collapseTimerBtn" class="flex items-center gap-1 px-3 py-1 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-full text-xs font-black active:scale-95 transition shadow-sm">
+        <span>▼ 收纳面板</span>
+      </button>
+    </div>
+
+    <!-- Scrollable Drawer Content (Half Screen) -->
+    <div class="flex-1 overflow-y-auto p-3 space-y-2.5 no-scrollbar">
+
+      <!-- DUAL TIME WINDOWS: A & B CARDS -->
+      <div>
+        <div class="flex items-center justify-between text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 px-1">
+          <span>点击卡片选择输入目标窗:</span>
+          <span id="activeTargetBadge" class="px-2 py-0.5 rounded-full bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300 font-extrabold">当前设定: 🅰 A 窗</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <!-- Window A -->
+          <div id="cardTimerA" class="cursor-pointer relative p-2.5 rounded-2xl border-2 transition-all bg-sky-50/40 dark:bg-sky-950/20 border-sky-500 shadow-sm" onclick="selectTargetWindow('A')">
+            <div class="flex items-center justify-between mb-0.5">
+              <span class="text-xs font-black flex items-center gap-1 text-sky-600 dark:text-sky-400">
+                <span class="w-2 h-2 rounded-full bg-sky-500 inline-block"></span>
+                🅰 A 窗 (包干/主跑)
+              </span>
+              <span id="stateLabelA" class="text-[9px] font-bold px-1 py-0.2 rounded bg-sky-100 dark:bg-sky-900 text-sky-700 dark:text-sky-300">待出发</span>
+            </div>
+            <div id="displayA" class="text-2xl sm:text-3xl font-mono font-black text-center text-slate-900 dark:text-sky-300 py-0.5">00:30</div>
+            <!-- Sub actions A -->
+            <div class="flex items-center justify-center gap-1 text-[10px]">
+              <button onclick="event.stopPropagation(); setDuration('A', 1, true)" class="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold active:scale-90">+1s</button>
+              <button onclick="event.stopPropagation(); setDuration('A', 5, true)" class="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold active:scale-90">+5s</button>
+              <button onclick="event.stopPropagation(); clearTimerWindow('A')" class="px-1.5 py-0.5 rounded bg-rose-50 dark:bg-rose-950/40 text-rose-600 border border-rose-200 dark:border-rose-800 font-bold active:scale-90">清零</button>
+            </div>
+            <!-- Toggle Button A -->
+            <button id="toggleBtnA" onclick="event.stopPropagation(); toggleTimer('A')" class="w-full mt-1.5 py-1.5 rounded-xl bg-sky-600 text-white text-xs font-black shadow-sm active:scale-95 transition">
+              启动 A
+            </button>
+          </div>
+
+          <!-- Window B -->
+          <div id="cardTimerB" class="cursor-pointer relative p-2.5 rounded-2xl border-2 transition-all bg-slate-50 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 shadow-sm" onclick="selectTargetWindow('B')">
+            <div class="flex items-center justify-between mb-0.5">
+              <span class="text-xs font-black flex items-center gap-1 text-amber-600 dark:text-amber-400">
+                <span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
+                🅱 B 窗 (备战/间歇)
+              </span>
+              <span id="stateLabelB" class="text-[9px] font-bold px-1 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400">待命中</span>
+            </div>
+            <div id="displayB" class="text-2xl sm:text-3xl font-mono font-black text-center text-slate-900 dark:text-amber-300 py-0.5">00:15</div>
+            <!-- Sub actions B -->
+            <div class="flex items-center justify-center gap-1 text-[10px]">
+              <button onclick="event.stopPropagation(); setDuration('B', 1, true)" class="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold active:scale-90">+1s</button>
+              <button onclick="event.stopPropagation(); setDuration('B', 5, true)" class="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold active:scale-90">+5s</button>
+              <button onclick="event.stopPropagation(); clearTimerWindow('B')" class="px-1.5 py-0.5 rounded bg-rose-50 dark:bg-rose-950/40 text-rose-600 border border-rose-200 dark:border-rose-800 font-bold active:scale-90">清零</button>
+            </div>
+            <!-- Toggle Button B -->
+            <button id="toggleBtnB" onclick="event.stopPropagation(); toggleTimer('B')" class="w-full mt-1.5 py-1.5 rounded-xl bg-amber-600 text-white text-xs font-black shadow-sm active:scale-95 transition">
+              启动 B
+            </button>
+          </div>
+        </div>
+
+        <!-- Automation & Chaining Mode Options -->
+        <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 p-2 rounded-xl text-[10px] font-bold text-slate-600 dark:text-slate-300 mt-1.5">
+          <label class="flex items-center gap-1.5 cursor-pointer">
+            <input type="checkbox" id="chainRelayCheckbox" class="rounded text-sky-600 focus:ring-0" checked>
+            <span>🔗 接力模式 (A完自动起B)</span>
+          </label>
+          <label class="flex items-center gap-1.5 cursor-pointer">
+            <input type="checkbox" id="loopCycleCheckbox" class="rounded text-amber-600 focus:ring-0">
+            <span>🔄 循环连跑 (A⇄B包干)</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 3 Rows of Quick Preset Buttons (Accumulative logic supported!) -->
+      <div class="space-y-1">
+        <div class="text-[10px] font-bold text-slate-400 px-1">快捷间歇 (累计注入当前选中的窗)</div>
+        <!-- Row 1: 5, 10, 15, 20 -->
+        <div class="grid grid-cols-4 gap-1.5">
+          <button class="timer-add-btn py-1.5 rounded-xl text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 active:bg-sky-500 active:text-white" data-sec="5">5s</button>
+          <button class="timer-add-btn py-1.5 rounded-xl text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 active:bg-sky-500 active:text-white" data-sec="10">10s</button>
+          <button class="timer-add-btn py-1.5 rounded-xl text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 active:bg-sky-500 active:text-white" data-sec="15">15s</button>
+          <button class="timer-add-btn py-1.5 rounded-xl text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 active:bg-sky-500 active:text-white" data-sec="20">20s</button>
+        </div>
+        <!-- Row 2: 30, 35, 40, 45 -->
+        <div class="grid grid-cols-4 gap-1.5">
+          <button class="timer-add-btn py-1.5 rounded-xl text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 active:bg-sky-500 active:text-white" data-sec="30">30s</button>
+          <button class="timer-add-btn py-1.5 rounded-xl text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 active:bg-sky-500 active:text-white" data-sec="35">35s</button>
+          <button class="timer-add-btn py-1.5 rounded-xl text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 active:bg-sky-500 active:text-white" data-sec="40">40s</button>
+          <button class="timer-add-btn py-1.5 rounded-xl text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 active:bg-sky-500 active:text-white" data-sec="45">45s</button>
+        </div>
+        <!-- Row 3: 1:00, 1:30, 2:00, 2:30 -->
+        <div class="grid grid-cols-4 gap-1.5">
+          <button class="timer-add-btn py-1.5 rounded-xl text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 active:bg-sky-500 active:text-white" data-sec="60">1:00</button>
+          <button class="timer-add-btn py-1.5 rounded-xl text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 active:bg-sky-500 active:text-white" data-sec="90">1:30</button>
+          <button class="timer-add-btn py-1.5 rounded-xl text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 active:bg-sky-500 active:text-white" data-sec="120">2:00</button>
+          <button class="timer-add-btn py-1.5 rounded-xl text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 active:bg-sky-500 active:text-white" data-sec="150">2:30</button>
+        </div>
+      </div>
+
+      <!-- Custom Time Input -->
+      <div class="pt-1 border-t border-slate-100 dark:border-slate-800 flex gap-2">
+        <input id="customTimeInput" type="text" placeholder="手动输入: 1.35 或 45" class="flex-1 text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 outline-none border border-slate-200 dark:border-slate-700 focus:border-sky-500">
+        <button id="applyCustomTimeBtn" class="px-3.5 py-1.5 bg-sky-600 text-white text-xs font-bold rounded-xl shrink-0 active:scale-95 transition">设定</button>
+      </div>
+
+      <!-- SOUND RINGTONE CUSTOMIZER & RESET SECTION -->
+      <div class="p-2 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+        <div class="flex items-center justify-between mb-1">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs">🔔</span>
+            <span class="text-[11px] font-extrabold text-slate-700 dark:text-slate-200">发令音频管理</span>
+          </div>
+          <span id="currentSoundStatus" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">系统初始发令音</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="file" id="soundFileInput" accept="audio/*" class="hidden">
+          <button id="uploadSoundBtn" class="flex-1 py-1 px-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[10px] font-bold rounded-lg active:scale-95 transition">
+            + 添加/更换音频
+          </button>
+          <button id="previewSoundBtn" class="py-1 px-2.5 bg-sky-100 text-sky-700 dark:bg-sky-900/60 dark:text-sky-300 text-[10px] font-bold rounded-lg active:scale-95 transition">
+            试听
+          </button>
+          <button id="resetSoundBtn" class="hidden py-1 px-2 bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 text-[10px] font-bold rounded-lg active:scale-95 transition">
+            恢复默认
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-2 pt-1">
+        <button id="toggleBothTimerBtn" class="flex-1 py-2.5 rounded-xl bg-slate-900 dark:bg-slate-700 text-white font-black text-xs active:scale-98 shadow-md transition flex items-center justify-center gap-1.5">
+          <span>同时启动 A & B</span>
+        </button>
+        <button id="resetAllTimersBtn" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs active:bg-slate-200 dark:active:bg-slate-700 transition">全部重设</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Audio Elements -->
+  <audio id="countdownAudio" src="countdown.mp3" preload="auto" class="hidden"></audio>
+  <audio id="customAudio" preload="auto" class="hidden"></audio>
+
+  <script>
+    // FULL NOVEMBER TRAINING DATA (25 Days, 0m Sundays excluded, redundant total verifications cleaned up)
+    const novemberData = [
+      // Week 1 (11/2 - 11/7)
+      {
+        week: "第 1 周",
+        date: "11月2日 (周一)",
+        shortDate: "11/2 周一",
+        dist: "4,200m",
+        title: "自由泳持续游校准 + 混合泳四姿转换基础",
+        modules: [
+          { name: "热身 800m", type: "warmup", items: [
+            "400m 自由泳轻松持续游（呼吸自然，唤醒水感）",
+            "200m 仰泳/蛙泳每 50m 交替游（活动肩髋关节）",
+            "4 × 50m 四姿分解配合游（蝶、仰、蛙、自各 1 个：25m 分解 + 25m 配合，组间休息 15s）"
+          ]},
+          { name: "技术练习 600m", type: "tech", items: [
+            "6 × 50m 仰转蛙、蛙转自转身衔接（奇数个：15m慢 + 10m仰加速触壁转蛙泳后25m；偶数个：15m慢 + 10m蛙双触壁转自打腿后25m，组间休息 20s）",
+            "6 × 50m 蛙泳滑行与频率平衡练习（前 25m 窄膝收腿外翻蹬夹；后 25m 连贯配合短滑行即抓水，组间休息 20s）"
+          ]},
+          { name: "主组 2,000m", type: "main", items: [
+            "主组 A (800m 混合泳衔接): 4 × 200m 个人混合泳(IM)，组间休息 30s（初始参考目标: 2:56.0–3:02.0，四姿切换呼吸调整）",
+            "组间转换休息：2:00 补水重置",
+            "主组 B (1,200m 自由泳校准): 12 × 100m 自由泳稳定持续游，组间休息 15s（第 1–4 个 1:26.0–1:28.0；第 5–12 个稳定在 1:23.0–1:25.0）"
+          ]},
+          { name: "速度与专项 300m", type: "sprint", items: [
+            "6 × 50m 自由泳后半程提速（前 25m 按 42s/50m + 后 25m 提频至 18.0s–19.0s，组间休息 25s）"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "300m 自由泳/仰泳长划臂慢游 + 200m 自选泳姿轻松游"
+          ]},
+          { name: "监控与微调", type: "note", items: [
+            "若 12×100m 到第 8 个后配速慢 2.5s 以上或划次增 2 划，第 9–10 个延长休息至 25s，停第 11–12 个。"
+          ]}
+        ]
+      },
+      {
+        week: "第 1 周",
+        date: "11月3日 (周二)",
+        shortDate: "11/3 周二",
+        dist: "3,900m",
+        title: "蝶泳专项耐力 + 200混前中段配速控制",
+        modules: [
+          { name: "热身 700m", type: "warmup", items: [
+            "300m 自由泳轻松游 + 200m 仰泳持续游 + 4 × 50m 蝶/蛙技术分解游（组间休息 15s）"
+          ]},
+          { name: "技术练习 600m", type: "tech", items: [
+            "6 × 50m 蝶泳呼吸节奏与波动控制（前 25m 单臂蝶 + 后 25m 配合，2划1换气低头贴水，组间休息 20s）",
+            "6 × 50m 仰泳头部稳定与入水方向（肩延长线入水，转身水下 3–5 次快打腿平顺出水，组间休息 20s）"
+          ]},
+          { name: "主组 1,700m", type: "main", items: [
+            "主组 A (900m 跨姿转换): 3轮 × 300m 混合泳组合，轮间休息 1:30",
+            "• ① 100m 蝶转仰 (50蝶+50仰，休息 20s，目标 1:20–1:23)；② 100m 仰转蛙 (休息 20s，目标 1:29–1:32)；③ 100m 蛙转自 (目标 1:24–1:27)",
+            "组间转换休息：2:30",
+            "主组 B (800m 蝶泳耐力): 8 × 100m 蝶/自专项组合，组间休息 30s（奇数个 50蝶+50自，偶数个 25蝶+50自+25蝶，总耗时 1:23.0–1:26.0）"
+          ]},
+          { name: "速度与专项 400m", type: "sprint", items: [
+            "8 × 50m 蛙泳专项节奏游（稳定在 45.5s–47.5s，组间休息 25s，疲劳下体会窄蹬夹）"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 仰泳/自由泳交替极慢排酸游"
+          ]}
+        ]
+      },
+      {
+        week: "第 1 周",
+        date: "11月4日 (周三)",
+        shortDate: "11/4 周三",
+        dist: "陆训 90m",
+        title: "单独陆地体能训练日 (核心稳定与肩髋控制)",
+        modules: [
+          { name: "动态热身 (15分钟)", type: "warmup", items: [
+            "泡沫轴放松背阔肌、胸椎与大腿内侧 5 分钟",
+            "四足跪姿胸椎旋转打开 2组 × 每侧10次，休息 30s",
+            "坐姿踝外翻激活 + 髋关节 90/90 转换 2组 × 12次，休息 30s"
+          ]},
+          { name: "肩胛控制与肩袖 (15分钟)", type: "tech", items: [
+            "弹力带肩袖外旋（屈肘90度贴肋）3组 × 每侧15次，组间休息 45s",
+            "俯卧训练凳徒手 Y-T-W 募集 3组 × 每字母8次（顶峰停顿2秒），组间休息 60s"
+          ]},
+          { name: "躯干抗旋转 (20分钟)", type: "main", items: [
+            "仰卧死虫式 (Deadbug 持 2kg 球) 3组 × 16次，组间休息 45s",
+            "站姿弹力带抗旋转推举 (Pallof Press) 3组 × 每侧10次，组间休息 45s",
+            "瑞士球前臂支撑抗伸展保持 3组 × 25秒，组间休息 45s"
+          ]},
+          { name: "下肢推进与内收肌 (25分钟)", type: "sprint", items: [
+            "高脚杯箱式深蹲 (6kg 哑铃) 3组 × 10次，组间休息 75s",
+            "仰卧双膝夹泡沫轴臀桥 3组 × 15次（顶端夹紧2秒），组间休息 60s",
+            "自重流线型垂直跳 (CMJ) 3组 × 5次，组间休息 90s"
+          ]},
+          { name: "冷身拉伸 (10分钟)", type: "warmdown", items: [
+            "重点拉伸胸小肌、背阔肌、髂腰肌与大腿内收肌，严禁练至力竭"
+          ]}
+        ]
+      },
+      {
+        week: "第 1 周",
+        date: "11月5日 (周四)",
+        shortDate: "11/5 周四",
+        dist: "4,200m",
+        title: "短距离速度激活 + 仰/蛙混合有氧耐力",
+        modules: [
+          { name: "热身 800m", type: "warmup", items: [
+            "400m 自由泳 + 200m 仰泳 + 4 × 50m 四姿渐加速游，组间休息 15s"
+          ]},
+          { name: "技术练习 500m", type: "tech", items: [
+            "8 × 25m 四姿出水衔接与前 15m 速度控制（蝶仰蛙自各 2 个），组间休息 25s",
+            "6 × 50m 仰/蛙技术游（3仰单臂配合 + 3蛙2踢1划），组间休息 20s"
+          ]},
+          { name: "速度与专项 400m (先执行)", type: "sprint", items: [
+            "8 × 50m 四姿短冲练习（蝶仰蛙自循环 2 轮：前 25m 全力 92% 冲刺 + 后 25m 极慢游，组间休息 40s）",
+            "前 25m 目标：蝶 16.5–17.5s ｜ 仰 19.5–20.5s ｜ 蛙 21.0–22.0s ｜ 自 16.0–17.0s"
+          ]},
+          { name: "主组 2,000m", type: "main", items: [
+            "主组 A (1,000m): 5 × 200m (50仰+50自×2)，组间休息 25s（目标 2:50.0–2:55.0，仰 44–45.5s，自 41–42s）",
+            "组间转换休息：2:00",
+            "主组 B (1,000m): 5 × 200m (50蛙+50自×2)，组间休息 30s（目标 2:58.0–3:04.0，强化蛙后转自由泳腿专项耐力）"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 自由泳/仰泳长划臂轻松游"
+          ]}
+        ]
+      },
+      {
+        week: "第 1 周",
+        date: "11月6日 (周五)",
+        shortDate: "11/6 周五",
+        dist: "4,000m",
+        title: "200m 混合泳分段配速 (Broken) 与专项转化",
+        modules: [
+          { name: "热身 800m", type: "warmup", items: [
+            "400m 自由泳轻松游 + 200m 个人混合泳 + 4 × 50m 蝶仰蛙自渐加速，组间休息 15s"
+          ]},
+          { name: "技术练习 400m", type: "tech", items: [
+            "8 × 50m 混合泳配速感知与转身（各泳姿 2 个：前 25m 目标配速 + 转身衔接 10m + 后 15m 慢游，组间休息 20s）"
+          ]},
+          { name: "主组 2,000m", type: "main", items: [
+            "主组 A (800m Broken 配速组): 4 × 200m 个人混合泳 Broken",
+            "• 执行方式: 50蝶(休 10s) + 50仰(休 10s) + 50蛙(休 10s) + 50自，完成后组间大休 1:30",
+            "• 净总时间目标: 2:43.0–2:48.0（分段参考：蝶 36.5–38s ｜ 仰 43–44.5s ｜ 蛙 45.5–47s ｜ 自 37.5–38.5s）",
+            "组间转换休息：1:30 慢游排酸",
+            "主组 B (1,000m 自由泳巩固): 10 × 100m 自由泳持续游，组间休息 15s（目标 1:23.5–1:25.5 稳定巡航）"
+          ]},
+          { name: "速度与专项 300m", type: "sprint", items: [
+            "6 × 50m 仰泳/蛙泳打腿耐力（3 仰腿 + 3 蛙腿），组间休息 20s"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 仰泳/自由泳缓慢舒展游"
+          ]}
+        ]
+      },
+      {
+        week: "第 1 周",
+        date: "11月7日 (周六)",
+        shortDate: "11/7 周六",
+        dist: "水陆 3,100m",
+        title: "水陆联动：陆上激活 + 水中中低强度有氧串联",
+        modules: [
+          { name: "陆训 60分钟 (10:30–11:30)", type: "tech", items: [
+            "泡沫轴放松背阔肌、内收肌与猫牛式拉伸 15 分钟",
+            "瑞士球仰卧骨盆后倾交替抬腿 3组 × 12次，休息 45s",
+            "侧卧蚌式 + 侧桥静态 3组 × 每侧12次，休息 45s",
+            "站姿弹力带 EVF 高肘慢速模拟 3组 × 15次，休息 45s",
+            "跪姿 2kg 药球胸前推 3组 × 8次，休息 60s",
+            "转场 11:30–11:45 更换泳衣补温水"
+          ]},
+          { name: "热身 500m", type: "warmup", items: [
+            "300m 自由泳轻快游 + 4 × 50m 混合泳顺序激活，组间休息 15s"
+          ]},
+          { name: "技术练习 400m", type: "tech", items: [
+            "8 × 50m 四姿划幅与节奏控制（数划次，不拼速度），组间休息 20s"
+          ]},
+          { name: "主组 1,600m", type: "main", items: [
+            "4轮 × 400m 有氧组合，轮间休息 45s：",
+            "• ① 200m 自稳定游 (休息 20s, 目标 2:48–2:53)；② 100m IM (休息 20s, 目标 1:26–1:30)；③ 100m 仰/蛙交替游 (目标 1:32–1:36)"
+          ]},
+          { name: "速度与专项 200m", type: "sprint", items: [
+            "4 × 50m 混合泳转身衔接游（重点抓触壁出水流畅），组间休息 25s"
+          ]},
+          { name: "冷身 400m", type: "warmdown", items: [
+            "400m 仰泳/自由泳极慢放松游"
+          ]}
+        ]
+      },
+
+      // Week 2 (11/9 - 11/14)
+      {
+        week: "第 2 周",
+        date: "11月9日 (周一)",
+        shortDate: "11/9 周一",
+        dist: "4,500m",
+        title: "自由泳 14×100m 持续游扩展 + 蛙泳推进效率",
+        modules: [
+          { name: "热身 800m", type: "warmup", items: [
+            "400m 自由泳 + 200m 仰泳 + 4 × 50m 蛙/自交替技术游，组间休息 15s"
+          ]},
+          { name: "技术练习 600m", type: "tech", items: [
+            "6 × 50m 蛙泳窄蹬夹（收腿不宽于肩，高肘抓水，目标 46.0s–47.5s），组间休息 20s",
+            "6 × 50m 自由泳高肘移臂与划水实效练习，组间休息 15s"
+          ]},
+          { name: "主组 2,200m", type: "main", items: [
+            "主组 A (800m): 4 × 200m 个人混合泳(IM)，组间休息 30s（目标 2:55.0–2:59.0，蛙泳段 48–49.5s）",
+            "组间转换休息：2:00",
+            "主组 B (1,400m 自由泳扩展): 14 × 100m 自由泳持续游，组间休息 15s（第 1–5 个 1:24.5–1:26.0；第 6–14 个稳定在 1:22.5–1:24.5）"
+          ]},
+          { name: "速度与专项 400m", type: "sprint", items: [
+            "4 × 100m 蛙/自专项转换 (50蛙+50自，蛙后立即提频自由泳)，组间休息 30s"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 仰泳/自由泳交替轻松游"
+          ]}
+        ]
+      },
+      {
+        week: "第 2 周",
+        date: "11月10日 (周二)",
+        shortDate: "11/10 周二",
+        dist: "4,200m",
+        title: "200混中段仰/蛙攻坚与 100m 蝶泳拆分配速",
+        modules: [
+          { name: "热身 700m", type: "warmup", items: [
+            "300m 自 + 200m 仰 + 4 × 50m IM 分解激活，组间休息 15s"
+          ]},
+          { name: "技术练习 600m", type: "tech", items: [
+            "6 × 50m 仰泳躯干刚度与转身出水衔接，组间休息 20s",
+            "6 × 50m 蝶泳流畅波浪配合（求轻盈控划次），组间休息 20s"
+          ]},
+          { name: "主组 2,000m", type: "main", items: [
+            "主组 A (1,200m 后三姿): 8 × 150m (50仰+50蛙+50自)，组间休息 35s（目标 2:09.0–2:13.0，仰 44–45s，蛙 46–47.5s，自 39–40.5s）",
+            "组间转换休息：2:30",
+            "主组 B (800m 蝶/自交替): 4轮 × 200m 组合，轮间休息 1:00：",
+            "• 2 × 50m 蝶专项配速（两趟间仅休息 15s，第 1 个 36.5–37.5s，第 2 个 38.0–39.5s）+ 休息 30s 接 100m 自有氧恢复"
+          ]},
+          { name: "速度与专项 400m", type: "sprint", items: [
+            "8 × 50m 四姿打腿（仰蛙蝶自各 2 个），组间休息 20s"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 极慢排酸游"
+          ]}
+        ]
+      },
+      {
+        week: "第 2 周",
+        date: "11月11日 (周三)",
+        shortDate: "11/11 周三",
+        dist: "陆训 90m",
+        title: "单独陆地体能训练日 (单侧下肢与蛙泳髋膝控制)",
+        modules: [
+          { name: "动态热身 (15分钟)", type: "warmup", items: [
+            "全身泡沫轴滚压 + 胸椎旋转 + 髋 90/90 + 蛙泳踝外翻"
+          ]},
+          { name: "肩胛控制 (15分钟)", type: "tech", items: [
+            "弹力带 Face Pull 面拉外旋 3组 × 15次，组间休息 45s",
+            "俯卧斜板轻哑铃 I-Y-T 上举 3组 × 8次，组间休息 60s"
+          ]},
+          { name: "躯干抗旋转与蝶泳波动 (20分钟)", type: "main", items: [
+            "仰卧死虫式 (双手拉弹力带张力) 3组 × 16次，组间休息 45s",
+            "半跪姿 Pallof Press 3组 × 每侧10次，组间休息 45s",
+            "瑞士球俯卧屈膝收腹 3组 × 10次，组间休息 60s"
+          ]},
+          { name: "下肢与内收肌 (25分钟)", type: "sprint", items: [
+            "分腿蹲 (Split Squat 持 3kg 哑铃) 3组 × 每侧8次，组间休息 75s",
+            "仰卧双膝夹球臀桥 (末次停顿5秒) 3组 × 12次，组间休息 60s",
+            "矮箱 (20cm) 跳下缓冲稳定 + 垂直跳 3组 × 5次，组间休息 90s"
+          ]},
+          { name: "冷身拉伸 (10分钟)", type: "warmdown", items: [
+            "胸背臀腿系统拉伸与深长呼吸"
+          ]}
+        ]
+      },
+      {
+        week: "第 2 周",
+        date: "11月12日 (周四)",
+        shortDate: "11/12 周四",
+        dist: "4,400m",
+        title: "四姿 50m 速度刺激 + 200m 自由泳持续巡航",
+        modules: [
+          { name: "热身 800m", type: "warmup", items: [
+            "400m 自由泳 + 200m 仰蛙交替 + 4 × 50m 四姿渐加速，组间休息 15s"
+          ]},
+          { name: "技术练习 600m", type: "tech", items: [
+            "6 × 50m 5m线静态浮起启动加速游（消除蹬壁借力考验纯加速），组间休息 25s",
+            "6 × 50m 四姿转身出水衔接，组间休息 20s"
+          ]},
+          { name: "速度与专项 500m (先执行)", type: "sprint", items: [
+            "2轮 × (4 × 50m 蝶仰蛙自 90%–92% 快速游)，每个 50m 休息 45s，轮间休息 1:30",
+            "参考目标：蝶 36.0–37.5s ｜ 仰 42.0–43.5s ｜ 蛙 45.0–46.5s ｜ 自 35.5–37.0s",
+            "组后 2 × 50m 轻松恢复游（100m）"
+          ]},
+          { name: "主组 2,000m", type: "main", items: [
+            "主组 A (1,200m): 6 × 200m 自由泳持续游，组间休息 25s（目标 2:47.0–2:51.0，前后期差 ≤1.5s）",
+            "组间转换休息：2:00",
+            "主组 B (800m): 8 × 100m 个人混合泳(IM)，组间休息 25s（目标 1:25.0–1:28.0，强化四姿快速切换）"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 自由泳/仰泳长划臂轻松游"
+          ]}
+        ]
+      },
+      {
+        week: "第 2 周",
+        date: "11月13日 (周五)",
+        shortDate: "11/13 周五",
+        dist: "4,400m",
+        title: "200m 个人混合泳整游与 Broken 结合",
+        modules: [
+          { name: "热身 800m", type: "warmup", items: [
+            "400m 自 + 200m IM + 4 × 50m 四姿渐加速，组间休息 15s"
+          ]},
+          { name: "技术练习 500m", type: "tech", items: [
+            "6 × 50m 蛙泳配速锚定游（控在 46.0s–47.0s），组间休息 20s",
+            "4 × 50m 蛙转自衔接提速练习，组间休息 20s"
+          ]},
+          { name: "主组 2,200m", type: "main", items: [
+            "主组 A (1,000m 整游+Broken): 5 × 200m 个人混合泳：",
+            "• 第 1、2、3 个为整游，休息 50s（目标 2:51.0–2:55.0，蝶38/仰44.5/蛙47/自42→39.5s）",
+            "• 第 4、5 个为 Broken (每50m休 10s)，轮间休息 1:30（净时间目标 2:43.0–2:46.5）",
+            "组间转换休息：2:30",
+            "主组 B (1,200m): 12 × 100m 自由泳稳定游，组间休息 15s（目标 1:23.0–1:25.0）"
+          ]},
+          { name: "速度与专项 400m", type: "sprint", items: [
+            "8 × 50m 仰/蛙交替技术恢复（奇数仰 45s，偶数蛙 48s），组间休息 20s"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 极慢排酸游"
+          ]}
+        ]
+      },
+      {
+        week: "第 2 周",
+        date: "11月14日 (周六)",
+        shortDate: "11/14 周六",
+        dist: "水陆 3,400m",
+        title: "水陆联动：躯干协调激活 + 水中混合有氧循环",
+        modules: [
+          { name: "陆训 60分钟 (10:30–11:30)", type: "tech", items: [
+            "泡沫轴滚压全身肌群 + 肩髋动态拉伸 15 分钟",
+            "仰卧死虫式静态对抗 3组 × 20秒，休息 45s",
+            "站姿单臂仰泳入水抓水模拟 3组 × 每侧12次，休息 45s",
+            "哑铃罗马尼亚硬拉 (RDL 6kg) 3组 × 10次，休息 60s",
+            "侧桥支撑 + 髋外展抬腿 3组 × 10次，休息 45s",
+            "深蹲接流线型踮脚延伸 3组 × 10次，休息 45s"
+          ]},
+          { name: "热身 500m", type: "warmup", items: [
+            "300m 自由泳 + 4 × 50m 仰/蛙交替技术游，组间休息 15s"
+          ]},
+          { name: "技术练习 400m", type: "tech", items: [
+            "8 × 50m (25m 徒手打腿 + 25m 配合，四姿循环 2 轮)，组间休息 20s"
+          ]},
+          { name: "主组 1,800m", type: "main", items: [
+            "3轮 × 600m 混合耐力循环组，轮间休息 1:30：",
+            "• ① 200m (50蛙+50自×2, 休息 25s, 目标 2:58–3:03)",
+            "• ② 200m IM (休息 25s, 目标 2:55–3:00)",
+            "• ③ 2 × 100m 自稳定游 (休息 15s, 目标 1:23–1:25)"
+          ]},
+          { name: "速度与专项 300m", type: "sprint", items: [
+            "6 × 50m 自/仰转身后 15m 流畅加速游，组间休息 20s"
+          ]},
+          { name: "冷身 400m", type: "warmdown", items: [
+            "400m 仰泳/自由泳缓慢放松游"
+          ]}
+        ]
+      },
+
+      // Week 3 (11/16 - 11/21)
+      {
+        week: "第 3 周",
+        date: "11月16日 (周一)",
+        shortDate: "11/16 周一",
+        dist: "4,900m",
+        title: "分轮 16×100m 自由泳持续能力 + 混合泳有氧底盘",
+        modules: [
+          { name: "热身 800m", type: "warmup", items: [
+            "400m 自 + 200m 仰 + 4 × 50m IM 顺序激活，组间休息 15s"
+          ]},
+          { name: "技术练习 600m", type: "tech", items: [
+            "6 × 50m 蛙泳窄膝快收高肘抓水（目标 45.5s–47.0s），组间休息 20s",
+            "6 × 50m 仰/自身体线性与出水衔接，组间休息 15s"
+          ]},
+          { name: "主组 2,600m", type: "main", items: [
+            "主组 A (1,000m): 5 × 200m 个人混合泳(IM)，组间休息 30s（目标 2:54.0–2:58.0，蛙泳段 47.5–49.0s）",
+            "组间转换休息：2:30",
+            "主组 B (1,600m 分轮自由泳): 2轮 × (8 × 100m 持续游)，两轮间休息 1:30：",
+            "• 第 1 轮 (8×100m): 组间休息 15s，目标配速 1:23.0–1:24.5",
+            "• 第 2 轮 (8×100m): 组间休息 12s，目标配速 1:21.5–1:23.5"
+          ]},
+          { name: "速度与专项 400m", type: "sprint", items: [
+            "8 × 50m 自由泳后 25m 提速（后 25m 提至 18.0s–18.8s），组间休息 25s"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 仰泳/自由泳长划臂轻松游"
+          ]}
+        ]
+      },
+      {
+        week: "第 3 周",
+        date: "11月17日 (周二)",
+        shortDate: "11/17 周二",
+        dist: "4,500m",
+        title: "100m 蝶泳 Broken 专项与 200 混转换强化",
+        modules: [
+          { name: "热身 800m", type: "warmup", items: [
+            "400m 自 + 200m 蛙 + 4 × 50m 蝶/仰技术配合，组间休息 15s"
+          ]},
+          { name: "技术练习 600m", type: "tech", items: [
+            "6 × 50m 蝶泳低平呼吸（每 25m 控在 8–9 划），组间休息 20s",
+            "6 × 50m 仰转蛙、蛙转自专项转身，组间休息 20s"
+          ]},
+          { name: "主组 2,200m", type: "main", items: [
+            "主组 A (1,200m): 4轮 × 300m 蝶/自组合，轮间休息 1:15：",
+            "• 100m 蝶 Broken [50蝶(休 10s)+50蝶]（净时间 1:13.0–1:15.5）+ 休息 35s 接 200m 自有氧",
+            "组间转换休息：2:30",
+            "主组 B (1,000m): 5 × 200m 个人混合泳(IM)，组间休息 40s（目标 2:52.0–2:56.0，蛙泳段 46.5–48.0s）"
+          ]},
+          { name: "速度与专项 400m", type: "sprint", items: [
+            "8 × 50m 四姿徒手打腿（仰蛙蝶自各 2 个），组间休息 20s"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 极慢排酸游"
+          ]}
+        ]
+      },
+      {
+        week: "第 3 周",
+        date: "11月18日 (周三)",
+        shortDate: "11/18 周三",
+        dist: "陆训 90m",
+        title: "单独陆地体能训练日 (躯干刚度与内收肌保护)",
+        modules: [
+          { name: "动态热身 (20分钟)", type: "warmup", items: [
+            "泡沫轴充分滚压背阔、胸肌、四头、内收与小腿 8 分钟 + 动态关节激活 12 分钟"
+          ]},
+          { name: "肩胛控制与拉力 (18分钟)", type: "tech", items: [
+            "弹力带肩袖外旋 + 90/90 保持 3组 × 12次，休息 45s",
+            "坐姿弹力带宽握划船 (慢放2秒) 3组 × 12次，休息 60s"
+          ]},
+          { name: "躯干三维稳定 (22分钟)", type: "main", items: [
+            "仰卧死虫式 (Deadbug) 3组 × 16次，休息 45s",
+            "站姿抗旋转推举结合流线型上举 3组 × 每侧10次，休息 45s",
+            "瑞士球前臂支撑动态前推 3组 × 10次，休息 60s"
+          ]},
+          { name: "下肢推进控量 (18分钟)", type: "sprint", items: [
+            "高脚杯箱式深蹲 (6kg 减组控量) 3组 × 8次，休息 75s",
+            "仰卧双膝夹球臀桥 3组 × 15次，休息 60s",
+            "自重流线型垂直跳 (CMJ) 3组 × 5次，休息 90s"
+          ]},
+          { name: "冷身拉伸 (12分钟)", type: "warmdown", items: [
+            "全身系统深度拉伸，保持肌肉弹性轻快"
+          ]}
+        ]
+      },
+      {
+        week: "第 3 周",
+        date: "11月19日 (周四)",
+        shortDate: "11/19 周四",
+        dist: "4,800m",
+        title: "四姿 25m/50m 快速游与 300/200/100 阶梯有氧",
+        modules: [
+          { name: "热身 800m", type: "warmup", items: [
+            "400m 自 + 200m 仰 + 4 × 50m 蛙/蝶分解配合，组间休息 15s"
+          ]},
+          { name: "技术练习 600m", type: "tech", items: [
+            "6 × 50m 四姿 5m线浮起无借力启动加速，组间休息 25s",
+            "6 × 50m 蛙泳滑行配速（目标 45.5s–47.0s，每 25m 9–11 划），组间休息 20s"
+          ]},
+          { name: "速度与专项 500m (先执行)", type: "sprint", items: [
+            "10 × 50m 四姿速度（前 25m 95% 全力冲刺 + 后 25m 极慢游，组间休息 40s）",
+            "前 25m 参考：蝶 16.2–17.2s ｜ 仰 19.2–20.2s ｜ 蛙 20.5–21.5s ｜ 自 15.8–16.6s"
+          ]},
+          { name: "主组 2,400m", type: "main", items: [
+            "3轮 × 800m 阶梯有氧组合，轮间休息 1:15：",
+            "• ① 300m 自持续游 (休息 25s, 目标 4:10–4:15)",
+            "• ② 200m IM (休息 25s, 目标 2:54–2:58)",
+            "• ③ 3 × 100m (50仰/蛙+50自，间歇 20s, 目标 1:25–1:28)"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 自由泳/仰泳长划臂轻松游"
+          ]}
+        ]
+      },
+      {
+        week: "第 3 周",
+        date: "11月20日 (周五)",
+        shortDate: "11/20 周五",
+        dist: "4,600m",
+        title: "200m 混合泳专项强化课 (全月最高峰)",
+        modules: [
+          { name: "热身 800m", type: "warmup", items: [
+            "400m 自 + 200m IM + 4 × 50m 四姿渐加速，组间休息 15s"
+          ]},
+          { name: "技术练习 500m", type: "tech", items: [
+            "6 × 50m 混合泳三转身加速（蝶转仰、仰转蛙、蛙转自各2），组间休息 20s",
+            "4 × 50m 四姿目标配速感知游，组间休息 20s"
+          ]},
+          { name: "主组 2,400m", type: "main", items: [
+            "主组 A (1,200m 混合泳强刺激): 2轮 × 600m 专项组，轮间休息 3:00：",
+            "• 2 × 200m IM 整游 (休息 50s, 目标 2:50.0–2:54.0) + 1 × 200m Broken [每50m休 10s, 净目标 2:42.0–2:45.5]",
+            "组间转换休息：2:30",
+            "主组 B (1,200m): 12 × 100m 自由泳持续游，组间休息 15s（目标 1:22.5–1:24.5）"
+          ]},
+          { name: "速度与专项 400m", type: "sprint", items: [
+            "4 × 100m 仰/蛙恢复性技术配合（仰 1:32–1:35，蛙 1:36–1:39），组间休息 25s"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 极慢排酸游"
+          ]}
+        ]
+      },
+      {
+        week: "第 3 周",
+        date: "11月21日 (周六)",
+        shortDate: "11/21 周六",
+        dist: "水陆 3,600m",
+        title: "水陆联动：恢复性核心激活 + 水中低压力巡航",
+        modules: [
+          { name: "陆训 60分钟 (10:30–11:30)", type: "tech", items: [
+            "筋膜球与泡沫轴滚压 20 分钟",
+            "仰卧死虫式配合呼吸 3组 × 14次，休息 45s",
+            "侧桥支撑 + 手臂外旋 3组 × 20秒，休息 45s",
+            "弹力带 Y 字上举与高肘模拟 3组 × 12次，休息 45s",
+            "慢速臀桥 3组 × 12次，休息 45s"
+          ]},
+          { name: "热身 500m", type: "warmup", items: [
+            "300m 自由泳舒展游 + 4 × 50m 仰/蛙交替轻松游，组间休息 15s"
+          ]},
+          { name: "技术练习 500m", type: "tech", items: [
+            "10 × 50m 四姿长划幅技术游（蝶2仰3蛙3自2），组间休息 15s"
+          ]},
+          { name: "主组 2,000m", type: "main", items: [
+            "主组 A (1,000m): 10 × 100m 自由泳稳定游，组间休息 15s（目标 1:24.0–1:26.0）",
+            "组间转换休息：1:30",
+            "主组 B (1,000m): 5 × 200m 混合交替（奇数仰/自交替，偶数蛙/自交替），组间休息 25s（目标 2:54–3:00）"
+          ]},
+          { name: "速度与专项 200m", type: "sprint", items: [
+            "4 × 50m 转身出水 15m 衔接游，组间休息 20s"
+          ]},
+          { name: "冷身 400m", type: "warmdown", items: [
+            "400m 自选泳姿极慢放松游"
+          ]}
+        ]
+      },
+
+      // Week 4 (11/23 - 11/28)
+      {
+        week: "第 4 周",
+        date: "11月23日 (周一)",
+        shortDate: "11/23 周一",
+        dist: "4,100m",
+        title: "调整周有氧效率复测 (对标 11/2 日)",
+        modules: [
+          { name: "热身 800m", type: "warmup", items: [
+            "400m 自 + 200m 仰 + 4 × 50m 蛙/自技术激活，组间休息 15s"
+          ]},
+          { name: "技术练习 500m", type: "tech", items: [
+            "6 × 50m 蛙泳窄蹬夹连贯配速（目标 45.5s–47.0s），组间休息 20s",
+            "4 × 50m 仰转蛙、蛙转自衔接，组间休息 20s"
+          ]},
+          { name: "主组 2,000m", type: "main", items: [
+            "主组 A (800m 对标复测): 4 × 200m 个人混合泳(IM)，组间休息 30s（目标 2:53.0–2:57.0，对比 11/2 流畅度）",
+            "组间转换休息：2:00",
+            "主组 B (1,200m 持续能力复测): 12 × 100m 自由泳持续游，组间休息 15s（第 1–4 个 1:23.5–1:25.0；第 5–12 个 1:21.0–1:23.0）"
+          ]},
+          { name: "速度与专项 300m", type: "sprint", items: [
+            "6 × 50m 自由泳后 25m 提速游，组间休息 25s"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 仰泳/自由泳交替慢游"
+          ]}
+        ]
+      },
+      {
+        week: "第 4 周",
+        date: "11月24日 (周二)",
+        shortDate: "11/24 周二",
+        dist: "3,700m",
+        title: "200 混跨姿转换精炼 (减量保质)",
+        modules: [
+          { name: "热身 700m", type: "warmup", items: [
+            "300m 自 + 200m 仰/蛙 + 4 × 50m IM 顺序激活，组间休息 15s"
+          ]},
+          { name: "技术练习 500m", type: "tech", items: [
+            "6 × 50m 蝶泳波浪传导低平呼吸（目标 37.0s–38.5s），组间休息 25s",
+            "4 × 50m 仰泳头部稳定转身前 15m 衔接，组间休息 20s"
+          ]},
+          { name: "主组 1,600m", type: "main", items: [
+            "主组 A (900m 跨姿检验): 3轮 × 300m 转换组合，轮间休息 1:45：",
+            "• ① 100m 蝶转仰 (休息 25s, 目标 1:19–1:21.5)；② 100m 仰转蛙 (休息 25s, 目标 1:27.5–1:30)；③ 100m 蛙转自 (目标 1:22.5–1:25)",
+            "组间转换休息：2:00",
+            "主组 B (700m): 7 × 100m（单数 50蝶+50自 目标 1:22–1:24.5；双数 100自稳定游 1:23–1:25），组间休息 30s"
+          ]},
+          { name: "速度与专项 400m", type: "sprint", items: [
+            "8 × 50m 四姿打腿与配合转换游（25腿 + 25配合），组间休息 20s"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 极慢排酸游"
+          ]}
+        ]
+      },
+      {
+        week: "第 4 周",
+        date: "11月25日 (周三)",
+        shortDate: "11/25 周三",
+        dist: "陆训 80m",
+        title: "单独陆地体能训练日 (调整减量 20% 蓄力)",
+        modules: [
+          { name: "动态热身 (15分钟)", type: "warmup", items: [
+            "全身泡沫轴梳理 + 关节动态激活"
+          ]},
+          { name: "肩胛与核心 (25分钟)", type: "tech", items: [
+            "弹力带肩袖外旋 + Y-T-W 2组 × 12次，休息 45s",
+            "仰卧死虫式 (Deadbug) 3组 × 16次，休息 45s",
+            "站姿抗旋转推举 (Pallof Press) 3组 × 每侧10次，休息 45s",
+            "瑞士球俯卧收腹 2组 × 10次，休息 60s"
+          ]},
+          { name: "下肢减组保速 (20分钟)", type: "sprint", items: [
+            "高脚杯箱式深蹲 (6kg 干脆站起) 2组 × 8次，休息 75s",
+            "仰卧双膝夹球臀桥 2组 × 15次，休息 60s",
+            "自重流线型垂直跳 (CMJ 高质量) 3组 × 5次，休息 90s"
+          ]},
+          { name: "冷身拉伸 (15分钟)", type: "warmdown", items: [
+            "全身肌肉深度拉伸与筋膜恢复"
+          ]}
+        ]
+      },
+      {
+        week: "第 4 周",
+        date: "11月26日 (周四)",
+        shortDate: "11/26 周四",
+        dist: "3,600m",
+        title: "月度四姿 50m 专项速度复测与轻快有氧",
+        modules: [
+          { name: "热身 700m", type: "warmup", items: [
+            "300m 自 + 200m 仰/蛙 + 4 × 50m 渐加速，组间休息 15s"
+          ]},
+          { name: "技术练习 500m", type: "tech", items: [
+            "6 × 50m 5m线静态浮起启动加速，组间休息 25s",
+            "4 × 50m 四姿转身出水衔接，组间休息 20s"
+          ]},
+          { name: "速度与专项 500m (对标 11/12)", type: "sprint", items: [
+            "2轮 × (4 × 50m 蝶仰蛙自 95% 高质量)，每个 50m 休息 50s，轮间休息 2:00",
+            "复测参考：50蝶 35.5–37.0s ｜ 50仰 41.5–43.0s ｜ 50蛙 44.5–46.0s ｜ 50自 35.0–36.5s",
+            "组后 2 × 50m 极慢技术游（100m）"
+          ]},
+          { name: "主组 1,400m", type: "main", items: [
+            "7 × 200m 自由泳/混合泳交替持续游（单数 200自 目标 2:46–2:50；双数 200IM 目标 2:55–2:59），组间休息 25s"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 仰泳/自由泳长划臂轻松游"
+          ]}
+        ]
+      },
+      {
+        week: "第 4 周",
+        date: "11月27日 (周五)",
+        shortDate: "11/27 周五",
+        dist: "3,800m",
+        title: "11月 200m 个人混合泳综合表现检验课",
+        modules: [
+          { name: "热身 800m", type: "warmup", items: [
+            "400m 自 + 200m IM + 4 × 50m 四姿配速激活，组间休息 15s"
+          ]},
+          { name: "技术练习 400m", type: "tech", items: [
+            "8 × 50m 混合泳转换与出水前 15m 节奏练习，组间休息 20s"
+          ]},
+          { name: "主组 1,800m", type: "main", items: [
+            "主组 A (800m 月度综合检验): 4 × 200m 个人混合泳(IM) 高质量整游，每个之间休息 1:10：",
+            "• 目标: 第 1 个 2:52–2:54；第 2、3、4 个 2:47.5–2:51.5（分段: 蝶 37–38s ｜ 仰 43.5–44.5s ｜ 蛙 45.5–47s ｜ 自 38–39.5s）",
+            "组间转换休息：2:00 慢游排酸",
+            "主组 B (800m 蝶/自巩固): 8 × 100m（1–2个 50蝶+50自 休息 25s；3–8个 100自稳定 休息 15s 目标 1:22–1:24）"
+          ]},
+          { name: "速度与专项 300m", type: "sprint", items: [
+            "6 × 50m 徒手四姿打腿放松与支撑，组间休息 20s"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 极慢放松游"
+          ]}
+        ]
+      },
+      {
+        week: "第 4 周",
+        date: "11月28日 (周六)",
+        shortDate: "11/28 周六",
+        dist: "水陆 3,000m",
+        title: "水陆联动：调整周轻负荷养护与有氧技术游",
+        modules: [
+          { name: "陆训 60分钟 (10:30–11:30)", type: "tech", items: [
+            "全身筋膜深度梳理 25 分钟",
+            "仰卧死虫式慢速 3组 × 12次，休息 45s",
+            "四足鸟狗式 3组 × 每侧8次，休息 45s",
+            "弹力带肩袖外旋 + EVF 轨迹模拟 3组 × 12次，休息 45s",
+            "慢速臀桥 2组 × 12次，休息 45s"
+          ]},
+          { name: "热身 500m", type: "warmup", items: [
+            "300m 自 + 4 × 50m 仰/蛙轻松游，组间休息 15s"
+          ]},
+          { name: "技术练习 400m", type: "tech", items: [
+            "8 × 50m 四姿长划幅流畅配合游（数划次，不拼速度），组间休息 20s"
+          ]},
+          { name: "主组 1,500m", type: "main", items: [
+            "3轮 × 500m 轻松有氧组合，轮间休息 45s：",
+            "• ① 200m 自稳定 (休息 20s, 目标 2:48–2:52)",
+            "• ② 200m 仰/蛙交替 (休息 20s, 目标 3:02–3:08)",
+            "• ③ 100m IM (目标 1:26–1:30)"
+          ]},
+          { name: "速度与专项 200m", type: "sprint", items: [
+            "4 × 50m 四姿转身出水流畅衔接，组间休息 20s"
+          ]},
+          { name: "冷身 400m", type: "warmdown", items: [
+            "400m 仰泳/自由泳极慢放松游"
+          ]}
+        ]
+      },
+
+      // Month Close (11/30)
+      {
+        week: "收官日",
+        date: "11月30日 (周一)",
+        shortDate: "11/30 周一",
+        dist: "3,900m",
+        title: "11月收官：有氧持续游与混合泳节奏衔接",
+        modules: [
+          { name: "热身 800m", type: "warmup", items: [
+            "400m 自 + 200m 仰 + 4 × 50m 蛙/蝶分解配合，组间休息 15s"
+          ]},
+          { name: "技术练习 500m", type: "tech", items: [
+            "6 × 50m 蛙泳窄蹬夹连贯配速（目标 45.5s–47.0s），组间休息 20s",
+            "4 × 50m 混合泳转身衔接，组间休息 20s"
+          ]},
+          { name: "主组 1,800m", type: "main", items: [
+            "主组 A (800m): 4 × 200m 个人混合泳(IM)，组间休息 30s（目标 2:53.0–2:57.0 平稳流畅）",
+            "组间转换休息：2:00",
+            "主组 B (1,000m): 10 × 100m 自由泳持续游，组间休息 15s（目标 1:22.0–1:24.0 稳速收官）"
+          ]},
+          { name: "速度与专项 300m", type: "sprint", items: [
+            "6 × 50m 自由泳后 25m 提速游，组间休息 25s"
+          ]},
+          { name: "冷身 500m", type: "warmdown", items: [
+            "500m 仰泳/自由泳长划臂轻松游"
+          ]}
+        ]
+      }
+    ];
+
+    let currentDayIndex = 0;
+    const completedTasks = {}; // Store checkbox state: { "dayIdx-modIdx-itemIdx": true }
+
+    // Touch gesture tracking for smooth mobile swiping
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    // DOM Elements
+    const dayTabsContainer = document.getElementById('dayTabsContainer');
+    const weekJumper = document.getElementById('weekJumper');
+    const heroPhase = document.getElementById('heroPhase');
+    const heroDistance = document.getElementById('heroDistance');
+    const heroTitle = document.getElementById('heroTitle');
+    const heroDayProgress = document.getElementById('heroDayProgress');
+    const modulesContainer = document.getElementById('modulesContainer');
+    const prevDayBtn = document.getElementById('prevDayBtn');
+    const nextDayBtn = document.getElementById('nextDayBtn');
+    const resetChecksBtn = document.getElementById('resetChecksBtn');
+    const restToast = document.getElementById('restToast');
+    const restToastText = document.getElementById('restToastText');
+    const mainCardArea = document.getElementById('mainCardArea');
+
+    // Timer & Drawer Elements
+    const timerBackdrop = document.getElementById('timerBackdrop');
+    const timerDrawer = document.getElementById('timerDrawer');
+    const fabTimerBtn = document.getElementById('fabTimerBtn');
+    const fabPulseRing = document.getElementById('fabPulseRing');
+    const fabTimerText = document.getElementById('fabTimerText');
+    const collapseTimerBtn = document.getElementById('collapseTimerBtn');
+
+    const cardTimerA = document.getElementById('cardTimerA');
+    const cardTimerB = document.getElementById('cardTimerB');
+    const displayA = document.getElementById('displayA');
+    const displayB = document.getElementById('displayB');
+    const stateLabelA = document.getElementById('stateLabelA');
+    const stateLabelB = document.getElementById('stateLabelB');
+    const toggleBtnA = document.getElementById('toggleBtnA');
+    const toggleBtnB = document.getElementById('toggleBtnB');
+    const activeTargetBadge = document.getElementById('activeTargetBadge');
+
+    const chainRelayCheckbox = document.getElementById('chainRelayCheckbox');
+    const loopCycleCheckbox = document.getElementById('loopCycleCheckbox');
+    const customTimeInput = document.getElementById('customTimeInput');
+    const applyCustomTimeBtn = document.getElementById('applyCustomTimeBtn');
+    const toggleBothTimerBtn = document.getElementById('toggleBothTimerBtn');
+    const resetAllTimersBtn = document.getElementById('resetAllTimersBtn');
+
+    // Audio & Customization
+    const countdownAudio = document.getElementById('countdownAudio');
+    const customAudio = document.getElementById('customAudio');
+    const currentSoundStatus = document.getElementById('currentSoundStatus');
+    const uploadSoundBtn = document.getElementById('uploadSoundBtn');
+    const soundFileInput = document.getElementById('soundFileInput');
+    const previewSoundBtn = document.getElementById('previewSoundBtn');
+    const resetSoundBtn = document.getElementById('resetSoundBtn');
+
+    let audioContext = null;
+    let customAudioBlobUrl = null;
+    let mp3Failed = false;
+    countdownAudio.addEventListener('error', () => { mp3Failed = true; });
+
+    // Dual Timer Data State
+    const timerState = {
+      A: { seconds: 30, initial: 30, running: false, interval: null, audioPlayed: false },
+      B: { seconds: 15, initial: 15, running: false, interval: null, audioPlayed: false }
+    };
+    let activeTarget = 'A'; // 'A' or 'B'
+
+    // ==========================================
+    // 1. RENDERING LOGIC (DAILY TRAINING PLANS)
+    // ==========================================
+
+    function renderDayTabs() {
+      dayTabsContainer.innerHTML = '';
+      novemberData.forEach((day, index) => {
+        const btn = document.createElement('button');
+        const isActive = index === currentDayIndex;
+        btn.className = `shrink-0 px-3 py-1.5 rounded-full text-xs font-black transition-all ${
+          isActive 
+            ? 'bg-sky-600 text-white shadow-sm scale-105' 
+            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80'
+        }`;
+        btn.textContent = day.shortDate;
+        btn.onclick = () => {
+          currentDayIndex = index;
+          renderDayCard();
+          scrollActiveTabIntoView();
+          syncWeekJumper();
+        };
+        dayTabsContainer.appendChild(btn);
+      });
+    }
+
+    function scrollActiveTabIntoView() {
+      const activeBtn = dayTabsContainer.children[currentDayIndex];
+      if (activeBtn) {
+        activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+    }
+
+    function syncWeekJumper() {
+      if (currentDayIndex <= 5) weekJumper.value = "0";
+      else if (currentDayIndex <= 11) weekJumper.value = "6";
+      else if (currentDayIndex <= 17) weekJumper.value = "12";
+      else if (currentDayIndex <= 23) weekJumper.value = "18";
+      else weekJumper.value = "24";
+    }
+
+    // Convert rest intervals in text to clickable rest hotspots
+    function makeRestHotspots(text) {
+      if (!text) return '';
+      const pattern = /(?:组间休息|组间转换休息[：:]*|轮间休息|每轮之间休息|两轮间休息|两趟间仅休息|每个之间休息|段间休息|大休|间歇|休|Rest|休息)\s*[:：]?\s*(\d{1,2}[:.]\d{2}|\d+)\s*(s|秒|分钟|分)?/gi;
+      return text.replace(pattern, (match, timeStr, unit) => {
+        let sec = 0;
+        if (timeStr.includes(':') || timeStr.includes('.')) {
+          const sep = timeStr.includes(':') ? ':' : '.';
+          const parts = timeStr.split(sep);
+          sec = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+        } else {
+          const val = parseInt(timeStr, 10);
+          if (unit && (unit.includes('分') || unit.includes('分钟'))) {
+            sec = val * 60;
+          } else {
+            sec = val;
+          }
+        }
+        if (isNaN(sec) || sec <= 0) return match;
+        const cleanLabel = match.replace(/'/g, "\\'");
+        return `<span class="rest-hotspot" onclick="event.stopPropagation(); loadRestFromHotspot(${sec}, '${cleanLabel}')" title="点击载入秒表">${match} ⏱</span>`;
+      });
+    }
+
+    function renderDayCard() {
+      const day = novemberData[currentDayIndex];
+      heroPhase.textContent = day.week;
+      heroDistance.textContent = day.dist;
+      heroTitle.textContent = `${day.date} ${day.title}`;
+
+      // Build modules checklist
+      modulesContainer.innerHTML = '';
+      let totalItems = 0;
+      let completedCount = 0;
+
+      day.modules.forEach((mod, modIdx) => {
+        const modCard = document.createElement('div');
+        modCard.className = `rounded-2xl p-3 border shadow-sm transition-all ${getModuleStyle(mod.type)}`;
+
+        let icon = '◆';
+        if (mod.type === 'warmup') icon = '🏊‍♂️';
+        else if (mod.type === 'tech') icon = '⏱';
+        else if (mod.type === 'main') icon = '🎯';
+        else if (mod.type === 'sprint') icon = '⚡';
+        else if (mod.type === 'warmdown') icon = '🧘';
+        else if (mod.type === 'note') icon = '★';
+
+        const headerHtml = `
+          <div class="flex items-center justify-between pb-1.5 mb-2 border-b border-black/5 dark:border-white/5">
+            <span class="text-xs font-black flex items-center gap-1.5">
+              <span>${icon}</span>
+              <span>${mod.name}</span>
+            </span>
+            <span class="text-[10px] font-bold opacity-75">组别 ${modIdx + 1}</span>
+          </div>
+        `;
+
+        let itemsHtml = '<div class="space-y-2">';
+        mod.items.forEach((item, itemIdx) => {
+          totalItems++;
+          const taskId = `${currentDayIndex}-${modIdx}-${itemIdx}`;
+          const isDone = !!completedTasks[taskId];
+          if (isDone) completedCount++;
+
+          const processedText = makeRestHotspots(item);
+
+          itemsHtml += `
+            <label class="flex items-start gap-2.5 cursor-pointer group">
+              <input type="checkbox" data-task-id="${taskId}" class="task-checkbox mt-1 w-4 h-4 rounded text-sky-600 focus:ring-0 border-slate-300 dark:border-slate-700 shrink-0" ${isDone ? 'checked' : ''}>
+              <div class="flex-1 text-xs leading-relaxed text-slate-700 dark:text-slate-200">
+                <span class="task-text">${processedText}</span>
+              </div>
+            </label>
+          `;
+        });
+        itemsHtml += '</div>';
+
+        modCard.innerHTML = headerHtml + itemsHtml;
+        modulesContainer.appendChild(modCard);
+      });
+
+      // Update progress label
+      const pct = totalItems > 0 ? Math.round((completedCount / totalItems) * 100) : 0;
+      heroDayProgress.textContent = `完成度: ${completedCount}/${totalItems} (${pct}%)`;
+
+      // Attach checkbox listeners
+      document.querySelectorAll('.task-checkbox').forEach(chk => {
+        chk.addEventListener('change', (e) => {
+          const tId = e.target.dataset.taskId;
+          completedTasks[tId] = e.target.checked;
+          renderDayCard();
+        });
+      });
+
+      renderDayTabs();
+    }
+
+    function getModuleStyle(type) {
+      switch (type) {
+        case 'warmup':
+          return 'bg-blue-50/70 dark:bg-slate-900/90 border-blue-200/80 dark:border-blue-900/50 text-blue-950 dark:text-blue-100';
+        case 'tech':
+          return 'bg-emerald-50/70 dark:bg-slate-900/90 border-emerald-200/80 dark:border-emerald-900/50 text-emerald-950 dark:text-emerald-100';
+        case 'main':
+          return 'bg-sky-50/90 dark:bg-sky-950/40 border-sky-300/80 dark:border-sky-800/80 text-sky-950 dark:text-sky-100 ring-1 ring-sky-400/20';
+        case 'sprint':
+          return 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-300/80 dark:border-amber-900/50 text-amber-950 dark:text-amber-100';
+        case 'warmdown':
+          return 'bg-slate-50 dark:bg-slate-900/80 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200';
+        default:
+          return 'bg-rose-50/70 dark:bg-slate-900/90 border-rose-200 dark:border-rose-900/50 text-rose-950 dark:text-rose-100';
+      }
+    }
+
+    // ==========================================
+    // 2. DUAL TIMER (A & B) & DRAWER CONTROLS
+    // ==========================================
+
+    window.selectTargetWindow = function(win) {
+      activeTarget = win;
+      if (win === 'A') {
+        cardTimerA.className = "cursor-pointer relative p-2.5 rounded-2xl border-2 transition-all bg-sky-50/40 dark:bg-sky-950/20 border-sky-500 shadow-sm";
+        cardTimerB.className = "cursor-pointer relative p-2.5 rounded-2xl border-2 transition-all bg-slate-50 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 shadow-sm";
+        activeTargetBadge.textContent = "当前设定: 🅰 A 窗";
+        activeTargetBadge.className = "px-2 py-0.5 rounded-full bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300 font-extrabold";
+      } else {
+        cardTimerB.className = "cursor-pointer relative p-2.5 rounded-2xl border-2 transition-all bg-amber-50/40 dark:bg-amber-950/20 border-amber-500 shadow-sm";
+        cardTimerA.className = "cursor-pointer relative p-2.5 rounded-2xl border-2 transition-all bg-slate-50 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 shadow-sm";
+        activeTargetBadge.textContent = "当前设定: 🅱 B 窗";
+        activeTargetBadge.className = "px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 font-extrabold";
+      }
+      updateFabText();
+    };
+
+    function parseDurationToSeconds(str) {
+      if (!str) return 0;
+      let clean = str.toLowerCase().replace('s', '').replace('秒', '').trim();
+      if (clean.includes('分')) return parseInt(clean, 10) * 60;
+      if (clean.includes(':')) {
+        const parts = clean.split(':');
+        return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+      }
+      if (clean.includes('.')) {
+        const parts = clean.split('.');
+        if (parts.length === 2) {
+          return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+        }
+      }
+      let val = parseInt(clean, 10);
+      return isNaN(val) ? 0 : val;
+    }
+
+    window.loadRestFromHotspot = function(sec, label) {
+      setDuration(activeTarget, sec, false);
+      showToast(`已载入到 ${activeTarget === 'A' ? '🅰 A 窗' : '🅱 B 窗'}: ${formatTime(sec)}`);
+      openTimerDrawer();
+    };
+
+    function showToast(msg) {
+      restToastText.textContent = msg;
+      restToast.classList.remove('opacity-0');
+      restToast.classList.add('opacity-100');
+      setTimeout(() => {
+        restToast.classList.remove('opacity-100');
+        restToast.classList.add('opacity-0');
+      }, 1800);
+    }
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60).toString().padStart(2, '0');
+      const s = (sec % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function updateWindowDisplay(win) {
+      const t = timerState[win];
+      const timeStr = formatTime(t.seconds);
+      if (win === 'A') {
+        displayA.textContent = timeStr;
+      } else {
+        displayB.textContent = timeStr;
+      }
+      updateFabText();
+    }
+
+    function updateFabText() {
+      if (timerState.A.running) {
+        fabTimerText.textContent = `A ${formatTime(timerState.A.seconds)}`;
+      } else if (timerState.B.running) {
+        fabTimerText.textContent = `B ${formatTime(timerState.B.seconds)}`;
+      } else {
+        fabTimerText.textContent = `${activeTarget} ${formatTime(timerState[activeTarget].seconds)}`;
+      }
+    }
+
+    window.setDuration = function(win, sec, accumulative = false) {
+      const t = timerState[win];
+      if (accumulative) {
+        t.seconds += sec;
+      } else {
+        t.seconds = sec;
+      }
+      t.initial = t.seconds;
+      pauseTimer(win);
+      const label = win === 'A' ? stateLabelA : stateLabelB;
+      label.textContent = `已设 ${formatTime(t.seconds)}`;
+      updateWindowDisplay(win);
+    };
+
+    window.clearTimerWindow = function(win) {
+      pauseTimer(win);
+      timerState[win].seconds = 0;
+      timerState[win].initial = 0;
+      const label = win === 'A' ? stateLabelA : stateLabelB;
+      label.textContent = '已清零';
+      updateWindowDisplay(win);
+    };
+
+    // ==========================================
+    // 3. AUDIO ENGINE & RINGTONE MANAGEMENT
+    // ==========================================
+
+    function initAudioContext() {
+      if (!audioContext) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) audioContext = new AudioCtx();
+      }
+      if (audioContext && audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+    }
+
+    function playBeep(freq = 1200, duration = 0.12, type = 'square', volume = 0.95) {
+      try {
+        initAudioContext();
+        if (!audioContext) return;
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+        gain.gain.setValueAtTime(volume, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.start();
+        osc.stop(audioContext.currentTime + duration);
+      } catch (err) {}
+    }
+
+    function playFinishWhistle() {
+      try {
+        initAudioContext();
+        if (!audioContext) return;
+        const now = audioContext.currentTime;
+        const osc1 = audioContext.createOscillator();
+        const osc2 = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc1.type = 'triangle';
+        osc1.frequency.setValueAtTime(1800, now);
+        osc1.frequency.linearRampToValueAtTime(1950, now + 0.65);
+        osc2.type = 'square';
+        osc2.frequency.setValueAtTime(2400, now);
+        osc2.frequency.linearRampToValueAtTime(2600, now + 0.65);
+        gain.gain.setValueAtTime(0.9, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(audioContext.destination);
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + 0.7);
+        osc2.stop(now + 0.7);
+      } catch (err) {}
+    }
+
+    function playCountdownAlert(remainingSec) {
+      initAudioContext();
+      if (customAudioBlobUrl) {
+        try {
+          customAudio.currentTime = 0;
+          customAudio.play().catch(() => playSynthCountdownTick(remainingSec));
+          return;
+        } catch (e) {}
+      }
+
+      if (!mp3Failed) {
+        try {
+          const offset = Math.max(0, 6 - remainingSec);
+          countdownAudio.currentTime = offset;
+          countdownAudio.play().catch(() => {
+            mp3Failed = true;
+            playSynthCountdownTick(remainingSec);
+          });
+          return;
+        } catch (e) {
+          mp3Failed = true;
+        }
+      }
+      playSynthCountdownTick(remainingSec);
+    }
+
+    function playSynthCountdownTick(sec) {
+      if (sec >= 1 && sec <= 5) {
+        const pitch = 850 + (5 - sec) * 140;
+        playBeep(pitch, 0.14, 'square', 0.95);
+      }
+    }
+
+    function stopAllAudio() {
+      try {
+        countdownAudio.pause();
+        countdownAudio.currentTime = 0;
+      } catch (e) {}
+      try {
+        customAudio.pause();
+        customAudio.currentTime = 0;
+      } catch (e) {}
+    }
+
+    // Sound customization controls
+    uploadSoundBtn.addEventListener('click', () => soundFileInput.click());
+
+    soundFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (customAudioBlobUrl) URL.revokeObjectURL(customAudioBlobUrl);
+      customAudioBlobUrl = URL.createObjectURL(file);
+      customAudio.src = customAudioBlobUrl;
+
+      currentSoundStatus.textContent = `已载入: ${file.name.slice(0, 10)}...`;
+      currentSoundStatus.className = "text-[10px] font-bold text-sky-600 dark:text-sky-400";
+      resetSoundBtn.classList.remove('hidden');
+      showToast(`已更换自定义发令音频: ${file.name}`);
+    });
+
+    previewSoundBtn.addEventListener('click', () => {
+      initAudioContext();
+      playCountdownAlert(6);
+    });
+
+    resetSoundBtn.addEventListener('click', () => {
+      if (customAudioBlobUrl) {
+        URL.revokeObjectURL(customAudioBlobUrl);
+        customAudioBlobUrl = null;
+      }
+      customAudio.src = '';
+      soundFileInput.value = '';
+      resetSoundBtn.classList.add('hidden');
+      currentSoundStatus.textContent = "系统初始发令音";
+      currentSoundStatus.className = "text-[10px] font-bold text-emerald-600 dark:text-emerald-400";
+      showToast('已恢复系统初始发令音！');
+    });
+
+    // ==========================================
+    // 4. TIMER EXECUTION ENGINE
+    // ==========================================
+
+    window.toggleTimer = function(win) {
+      if (timerState[win].running) {
+        pauseTimer(win);
+      } else {
+        if (timerState[win].seconds === 0) {
+          timerState[win].seconds = timerState[win].initial || 30;
+        }
+        startTimer(win);
+      }
+    };
+
+    function startTimer(win) {
+      const t = timerState[win];
+      if (t.running || t.seconds <= 0) return;
+      initAudioContext();
+      t.running = true;
+      t.audioPlayed = false;
+
+      const btn = win === 'A' ? toggleBtnA : toggleBtnB;
+      const label = win === 'A' ? stateLabelA : stateLabelB;
+      btn.textContent = `暂停 ${win}`;
+      btn.classList.replace('bg-sky-600', 'bg-rose-600');
+      btn.classList.replace('bg-amber-600', 'bg-rose-600');
+      label.textContent = "正在计时...";
+
+      checkFabPulse();
+
+      if (t.seconds <= 5) {
+        t.audioPlayed = true;
+        playCountdownAlert(t.seconds);
+      }
+
+      t.interval = setInterval(() => {
+        if (t.seconds > 0) {
+          t.seconds--;
+          updateWindowDisplay(win);
+
+          if (t.seconds === 5 && !t.audioPlayed) {
+            t.audioPlayed = true;
+            playCountdownAlert(5);
+          } else if (t.seconds > 0 && t.seconds < 5) {
+            label.textContent = `剩 ${t.seconds} 秒准备！`;
+            if (mp3Failed && !customAudioBlobUrl) {
+              playSynthCountdownTick(t.seconds);
+            }
+          }
+
+          if (t.seconds === 0) {
+            clearInterval(t.interval);
+            t.running = false;
+            btn.textContent = `启动 ${win}`;
+            btn.classList.replace('bg-rose-600', win === 'A' ? 'bg-sky-600' : 'bg-amber-600');
+            label.textContent = "出发！完工";
+            checkFabPulse();
+
+            if (!customAudioBlobUrl && mp3Failed) {
+              playFinishWhistle();
+            }
+            if (navigator.vibrate) navigator.vibrate([250, 100, 250, 100, 500]);
+
+            handleChainingAfterFinish(win);
+          }
+        }
+      }, 1000);
+    }
+
+    function pauseTimer(win) {
+      const t = timerState[win];
+      clearInterval(t.interval);
+      t.running = false;
+      const btn = win === 'A' ? toggleBtnA : toggleBtnB;
+      const label = win === 'A' ? stateLabelA : stateLabelB;
+      btn.textContent = `启动 ${win}`;
+      btn.classList.replace('bg-rose-600', win === 'A' ? 'bg-sky-600' : 'bg-amber-600');
+      if (t.seconds > 0) label.textContent = "已暂停";
+      checkFabPulse();
+      updateFabText();
+    }
+
+    function handleChainingAfterFinish(finishedWin) {
+      const isRelay = chainRelayCheckbox.checked;
+      const isLoop = loopCycleCheckbox.checked;
+
+      if (finishedWin === 'A') {
+        if (isRelay || isLoop) {
+          showToast('🅰 窗完成！正在接力启动 🅱 窗...');
+          setTimeout(() => {
+            if (timerState.B.seconds === 0) timerState.B.seconds = timerState.B.initial || 15;
+            startTimer('B');
+          }, 600);
+        }
+      } else if (finishedWin === 'B') {
+        if (isLoop) {
+          showToast('🅱 窗完成！正在循环重启 🅰 窗包干...');
+          setTimeout(() => {
+            timerState.A.seconds = timerState.A.initial || 30;
+            updateWindowDisplay('A');
+            startTimer('A');
+          }, 600);
+        }
+      }
+    }
+
+    function checkFabPulse() {
+      if (timerState.A.running || timerState.B.running) {
+        fabPulseRing.classList.remove('opacity-0');
+        fabPulseRing.classList.add('pulse-ring', 'opacity-80');
+      } else {
+        fabPulseRing.classList.remove('pulse-ring', 'opacity-80');
+        fabPulseRing.classList.add('opacity-0');
+      }
+    }
+
+    toggleBothTimerBtn.addEventListener('click', () => {
+      initAudioContext();
+      if (timerState.A.running || timerState.B.running) {
+        pauseTimer('A');
+        pauseTimer('B');
+      } else {
+        if (timerState.A.seconds === 0) timerState.A.seconds = timerState.A.initial || 30;
+        if (timerState.B.seconds === 0) timerState.B.seconds = timerState.B.initial || 15;
+        startTimer('A');
+        startTimer('B');
+      }
+    });
+
+    resetAllTimersBtn.addEventListener('click', () => {
+      pauseTimer('A');
+      pauseTimer('B');
+      stopAllAudio();
+      timerState.A.seconds = timerState.A.initial || 30;
+      timerState.B.seconds = timerState.B.initial || 15;
+      stateLabelA.textContent = "已重置";
+      stateLabelB.textContent = "已重置";
+      updateWindowDisplay('A');
+      updateWindowDisplay('B');
+    });
+
+    // Preset button accumulation logic for active target window
+    document.querySelectorAll('.timer-add-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sec = parseInt(btn.dataset.sec, 10);
+        if (timerState[activeTarget].seconds === 0) {
+          setDuration(activeTarget, sec, false);
+        } else {
+          setDuration(activeTarget, sec, true);
+        }
+      });
+    });
+
+    // Custom time input: e.g. "1.35" -> 95s
+    applyCustomTimeBtn.addEventListener('click', () => {
+      const val = customTimeInput.value.trim();
+      if (!val) return;
+      const sec = parseDurationToSeconds(val);
+      if (sec > 0) {
+        setDuration(activeTarget, sec, false);
+        customTimeInput.value = '';
+        showToast(`已设定到 ${activeTarget === 'A' ? '🅰 A 窗' : '🅱 B 窗'}: ${formatTime(sec)}`);
+      }
+    });
+
+    // ==========================================
+    // 5. HALF-SCREEN DRAWER OPEN & COLLAPSE
+    // ==========================================
+
+    function openTimerDrawer() {
+      timerBackdrop.classList.remove('hidden');
+      timerDrawer.classList.remove('translate-y-full');
+      timerDrawer.classList.add('translate-y-0');
+    }
+
+    function closeTimerDrawer() {
+      timerDrawer.classList.remove('translate-y-0');
+      timerDrawer.classList.add('translate-y-full');
+      setTimeout(() => {
+        timerBackdrop.classList.add('hidden');
+      }, 250);
+    }
+
+    fabTimerBtn.addEventListener('click', openTimerDrawer);
+    collapseTimerBtn.addEventListener('click', closeTimerDrawer);
+    timerBackdrop.addEventListener('click', closeTimerDrawer);
+
+    // ==========================================
+    // 6. SWIPE, NAVIGATION & INITIALIZATION
+    // ==========================================
+
+    // Prev / Next Buttons
+    prevDayBtn.addEventListener('click', () => {
+      if (currentDayIndex > 0) {
+        currentDayIndex--;
+        renderDayCard();
+        scrollActiveTabIntoView();
+        syncWeekJumper();
+      }
+    });
+
+    nextDayBtn.addEventListener('click', () => {
+      if (currentDayIndex < novemberData.length - 1) {
+        currentDayIndex++;
+        renderDayCard();
+        scrollActiveTabIntoView();
+        syncWeekJumper();
+      }
+    });
+
+    resetChecksBtn.addEventListener('click', () => {
+      const day = novemberData[currentDayIndex];
+      day.modules.forEach((mod, mIdx) => {
+        mod.items.forEach((_, iIdx) => {
+          delete completedTasks[`${currentDayIndex}-${mIdx}-${iIdx}`];
+        });
+      });
+      renderDayCard();
+      showToast('今日任务已重置勾选');
+    });
+
+    weekJumper.addEventListener('change', (e) => {
+      currentDayIndex = parseInt(e.target.value, 10);
+      renderDayCard();
+      scrollActiveTabIntoView();
+    });
+
+    // Swipe gesture support on card area
+    mainCardArea.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    mainCardArea.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].screenX;
+      const touchEndY = e.changedTouches[0].screenY;
+      const diffX = touchEndX - touchStartX;
+      const diffY = touchEndY - touchStartY;
+
+      // Ensure horizontal swipe dominant
+      if (Math.abs(diffX) > 55 && Math.abs(diffY) < 40) {
+        if (diffX < 0 && currentDayIndex < novemberData.length - 1) {
+          // Swipe left -> Next day
+          currentDayIndex++;
+          renderDayCard();
+          scrollActiveTabIntoView();
+          syncWeekJumper();
+        } else if (diffX > 0 && currentDayIndex > 0) {
+          // Swipe right -> Prev day
+          currentDayIndex--;
+          renderDayCard();
+          scrollActiveTabIntoView();
+          syncWeekJumper();
+        }
+      }
+    }, { passive: true });
+
+    // Theme Toggle
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    themeToggleBtn.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+    });
+
+    // App Startup
+    renderDayCard();
+    scrollActiveTabIntoView();
+    updateWindowDisplay('A');
+    updateWindowDisplay('B');
+  </script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+export function bindSwipe(el,onSwipe,threshold=48){let x=0,y=0;el.addEventListener("touchstart",e=>{x=e.changedTouches[0].clientX;y=e.changedTouches[0].clientY},{passive:true});el.addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-x,dy=e.changedTouches[0].clientY-y;if(Math.abs(dx)>=threshold&&Math.abs(dx)>Math.abs(dy))onSwipe(dx<0?1:-1)},{passive:true})}

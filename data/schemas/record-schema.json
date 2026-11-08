@@ -1,0 +1,268 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "date",
+    "status",
+    "sets",
+    "detailed_splits"
+  ],
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "athlete": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "completed_target",
+        "completed_below_target",
+        "partial_completed",
+        "proactive_deload",
+        "canceled",
+        "substituted",
+        "external_interruption",
+        "physically_stopped"
+      ]
+    },
+    "actual_total_distance": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "daily_overall_rpe": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 10
+    },
+    "resting_hr": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "coach_notes": {
+      "type": "string"
+    },
+    "variance_analysis": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "reason"
+      ],
+      "properties": {
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "sets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "module_index",
+          "module_name",
+          "status",
+          "variance_analysis",
+          "alternative_items"
+        ],
+        "properties": {
+          "module_index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "module_name": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "completed_target",
+              "completed_below_target",
+              "partial_completed",
+              "proactive_deload",
+              "canceled",
+              "substituted",
+              "external_interruption",
+              "physically_stopped"
+            ]
+          },
+          "variance_analysis": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "required": [
+              "reason"
+            ],
+            "properties": {
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "alternative_items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "status"
+              ],
+              "properties": {
+                "status": {
+                  "not": {
+                    "const": "completed_target"
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "variance_analysis": {
+                  "type": "object",
+                  "required": [
+                    "reason"
+                  ],
+                  "properties": {
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "status"
+              ],
+              "properties": {
+                "status": {
+                  "const": "substituted"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "alternative_items": {
+                  "minItems": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "detailed_splits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "module_index",
+          "module_name",
+          "rep_index",
+          "split_50m",
+          "time_str",
+          "stroke_count",
+          "post_hr"
+        ],
+        "properties": {
+          "module_index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "module_name": {
+            "type": "string"
+          },
+          "rep_index": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "split_50m": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "time_str": {
+            "type": "string"
+          },
+          "stroke_count": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "post_hr": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "not": {
+              "const": "completed_target"
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "variance_analysis": {
+            "type": "object",
+            "required": [
+              "reason"
+            ],
+            "properties": {
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

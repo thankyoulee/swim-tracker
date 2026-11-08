@@ -1,0 +1,17 @@
+{
+	"name": "李文勇游泳训练管理系统",
+	"short_name": "游泳训练",
+	"start_url": "./",
+	"display": "standalone",
+	"background_color": "#0f172a",
+	"theme_color": "#0e7490",
+	"lang": "zh-CN",
+	"icons": [
+		{
+			"src": "icons/swimtracker.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any maskable"
+		}
+	]
+}
