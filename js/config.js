@@ -19,4 +19,4 @@ export const HR_ZONES = {
 };
 
 // 确保为干净的纯文本 URL 字符串（部署后请替换为你真实的 Cloudflare 域名）
-export const API_BASE_URL = "https://swim-tracker-api.chengyujie5856.workers.dev";
+export const API_BASE_URL = "https://winter-sky-b882swim-tracker-api.chengyujie5856.workers.dev";
