@@ -1,4 +1,4 @@
-const CACHE = "swimtracker-v6";
+const CACHE = "swimtracker-v7"; // 版本号升至 v7，强制浏览器更新缓存！
 const ASSETS = [
   "./",
   "index.html",
@@ -37,7 +37,13 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
+  // 1. 非 GET 请求（如 API 的 PUT/OPTIONS）直接放行，不走缓存
   if (event.request.method !== "GET") return;
+  
+  // 2. 跨域的 API 请求直接放行，不走缓存
+  const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin) return;
+
   event.respondWith(
     caches.match(event.request, { cacheName: CACHE })
       .then((cachedResponse) => cachedResponse || fetch(event.request)

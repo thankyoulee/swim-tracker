@@ -14,7 +14,6 @@ function readJSON(key, fallback) {
 }
 
 function endpointURL(endpoint) {
-
   let raw = endpoint || API_BASE_URL || localStorage.getItem("swimtracker:api-url") || "";
   // 过滤可能误入的 Markdown 标记或空格
   raw = raw.replace(/^\[|\]$/g, "").replace(/\)$/, "").trim();
@@ -47,6 +46,7 @@ export async function fetchRemoteRecord(date, endpoint = "") {
   const baseURL = endpointURL(endpoint).replace(/\/$/, "");
   if (!baseURL || globalThis.navigator?.onLine === false) return null;
   const response = await fetch(`${baseURL}/records/${encodeURIComponent(date)}`, {
+    mode: "cors", // 显式声明跨域
     headers: { "Accept": "application/json" }
   });
   if (response.status === 404) return null;
@@ -74,9 +74,10 @@ async function flush(endpoint) {
     try {
       const response = await fetch(`${baseURL}/records/${encodeURIComponent(date)}`, {
         method: "PUT",
+        mode: "cors", // 强制跨域模式
         headers: { 
-          "content-type": "application/json", 
-          "if-match": String(expectedVersion) 
+          "Content-Type": "application/json", // 首字母大写规范化
+          "If-Match": String(expectedVersion) // 首字母大写规范化
         },
         body: JSON.stringify(record),
       });
